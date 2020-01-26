@@ -1,17 +1,35 @@
-setwd("E:/Rx Fire/pollutant_data/")
+setwd("H:/R_Package_Cbone_FIRES/AirQuality/")
 poll.code <- c("88101","81102","LEAD","42101","42602","44201","42401")
 poll.name <- c("PM2.5","PM10","Lead","CO","NO2","O3","SO2")
+t1 <- Sys.time()
 for(i in 2007:2014){
+  t2 <- Sys.time()
+  print(paste("Starting ", i, " at ", t2, "...", sep = ""))
   for(j in 1:3){
-    temp <- read.csv(paste0("daily_",poll.code[j],"_",i,".csv"))
-    write.csv(temp, paste0(poll.name[j],"_",i,".csv"))
+    t3 <- Sys.time()
+    print(paste("Starting ", poll.name[j], " at ", t3, "...", sep = ""))
+    temp <- read.csv(paste0("Daily/",poll.code[j], "/daily_",poll.code[j],"_",i,"/daily_",poll.code[j],"_",i,".csv"))
+    write.csv(temp, paste0("Daily/", poll.name[j],"_",i,".csv"))
+    t4 <- Sys.time()
+    print(paste("Writing finished for ", poll.name[j], " in...", sep = ""))
+    print(t4 - t3)
   }
   for(j in 4:7){
-    temp <- read.csv(paste0("hourly_",poll.code[j],"_",i,".csv"))
-    write.csv(temp, paste0(poll.name[j],"_",i,".csv"))
+    t5 <- Sys.time()
+    print(paste("Starting ", poll.name[j], " at ", t5, "...", sep = ""))
+    temp <- read.csv(paste0("hourly/",poll.code[j], "/hourly_",poll.code[j],"_",i,"/hourly_",poll.code[j],"_",i,".csv"))
+    write.csv(temp, paste0("hourly/", poll.name[j],"_",i,".csv"))
+    t6 <- Sys.time()
+    print(paste("Writing finished for ", poll.name[j], " in...", sep = ""))
+    print(t6 - t5)
   }
+  t7 <- Sys.time()
+  print(paste("Finished ", i, " in...", sep = ""))
+  print(t7-t2)
 }
-
+t8 <- Sys.time()
+print(paste("Finished All in...", sep = ""))
+print(t8 - t1)
 
 #### data in only the 11 states##############################
 ### write new pollutant file with only the necessary columns
