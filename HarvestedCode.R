@@ -1,4 +1,4 @@
-setwd("H:/R_Package_Cbone_FIRES/AirQuality/")
+setwd("E:/R_Package_Cbone_FIRES/AirQuality/")
 poll.code <- c("88101","81102","LEAD","42101","42602","44201","42401")
 poll.name <- c("PM2.5","PM10","Lead","CO","NO2","O3","SO2")
 t1 <- Sys.time()
@@ -33,7 +33,7 @@ print(t8 - t1)
 
 #### data in only the 11 states##############################
 ### write new pollutant file with only the necessary columns
-setwd("H:/R_Package_Cbone_FIRES/AirQuality/")
+setwd("E:/R_Package_Cbone_FIRES/AirQuality/")
 poll.name <- c("PM2.5","PM10","Lead","CO","NO2","O3","SO2")
 states <- c(4,6,8,16,30,32,35,41,49,53,56)
 start.time <- proc.time()
@@ -81,7 +81,7 @@ end.time <- proc.time()
 print(end.time-start.time)
 
 ########
-setwd("H:/R_Package_Cbone_FIRES/AirQuality/")
+setwd("E:/R_Package_Cbone_FIRES/AirQuality/")
 t1 <- Sys.time()
 for(i in 4:7){
   t2 <- Sys.time()
@@ -172,7 +172,7 @@ threshold <- c(35, 150, .15, 35, 100, .07, 75)
 for(j in 1:7){ #var
   #make file
   if(j==1|j==2|j==3){
-    setwd("H:/R_Package_Cbone_FIRES/AirQuality/")
+    setwd("E:/R_Package_Cbone_FIRES/AirQuality/")
     for(i in 2007:2014){
      assign(paste0(var.name[j],"_",i), read.csv(paste0("Daily/",var.name[j],"_",i,"_clean.csv")))
     }
@@ -182,8 +182,7 @@ for(j in 1:7){ #var
     Var$X <- NULL
     # Var$Date <- NULL
   } else if(j==4|j==5|j==6|j==7){
-    j = 4
-    setwd("H:/R_Package_Cbone_FIRES/AirQuality/")
+    setwd("E:/R_Package_Cbone_FIRES/AirQuality/")
     for(i in 2007:2014){
       assign(paste0(var.name[j],"_",i), read.csv(paste0("Hourly/",var.name[j],"_",i,"_Daily.csv")))
     }
@@ -198,11 +197,11 @@ for(j in 1:7){ #var
   }
   
   
-  write.csv(Var, paste("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/", var.name[j], "_AllYears.csv", sep = ""), row.names = FALSE)
+  write.csv(Var, paste("E:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/", var.name[j], "_AllYears.csv", sep = ""), row.names = FALSE)
   Var$Type <- "All Observations"
   head(Var)
   
-  Fires <- read.csv("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/Fires_AllCalcs.csv")
+  Fires <- read.csv("E:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/Fires_AllCalcs.csv")
   Fires <- subset(Fires, select = c("State", "Date", var.name[j]))
   colnames(Fires) <- c("State", "Date", var.name[j])
   Fires$Type <- "Fire Observations"
@@ -263,7 +262,7 @@ for(j in 1:7){ #var
     
     
     
-    setwd("H:/R_Package_Cbone_FIRES/Outputs/Frequency Plots/Test/")
+    setwd("E:/R_Package_Cbone_FIRES/Outputs/Frequency Plots/Test/")
     pdf(paste0(var.name[j],"_FrequencyAnalysis.pdf"), width=10, height=7, onefile=FALSE)
     figure <- grid.arrange(grobs=plots,layout_matrix=lay)
     print(figure)
@@ -275,7 +274,7 @@ for(j in 1:7){ #var
                  c(5,5,5,6,6,6,7,7,7,8,8,8),
                  c(9,9,9,10,10,10,11,11,11,NA,12,NA))
     
-    setwd("H:/R_Package_Cbone_FIRES/Outputs/Frequency Plots/Test/")
+    setwd("E:/R_Package_Cbone_FIRES/Outputs/Frequency Plots/Test/")
     pdf(paste0(var.name[j],"_FrequencyAnalysis.pdf"), width=10, height=7, onefile=FALSE)
     figure <- grid.arrange(grobs=plots,layout_matrix=lay)
     print(figure)
