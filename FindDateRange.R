@@ -1,7 +1,7 @@
 #This is a start of the Analysis project
 #Rx Fire data from Emma\Outputs\RxFires Files\Fires_AllCalcs.csv
 library(lubridate)
-
+memory.limit(160000)
 fireData <- read.csv("Fires_AllCalcs.csv", stringsAsFactors = FALSE)
 
 #Examine data
@@ -33,14 +33,18 @@ for (i in 1:length(states)){
 #Since date range is almost the full year in most cases the sample time will be a full year
 fullRange <- data.frame(Date = seq(ymd('2007-01-01'), ymd('2014-12-31'), by = 'days'))
 
-#Join fire dates
-fireSet <- merge(fullRange, fireData, by.x = "Date", by.y = "Date", all.x = TRUE)
-noFireSet <- data.frame(Date = fireSet[is.na(fireSet$unique_ID),c(1)])
-fireSet <- fireSet[!is.na(fireSet$unique_ID),]
+#Split by Source
+doiFires <- fireData[which(fireData$Source == "DOI"),]
+USFSFires <- fireData[which(fireData$Source == "USFS"),]
 
+#Join to full date range and remove the nulls to be unburned dates
+doiFireDays <- merge(fullRange, doiFires, by.x = "Date", by.y = "Date", all.x = TRUE)
+doiNoFire <- data.frame(Date = doiFireDays[is.na(doiFireDays$unique_ID),c(1)])
+doiFireDays <- doiFireDays[!is.na(doiFireDays$unique_ID),]
 
-
-
+USFSFireDays <- merge(fullRange, USFSFires, by.x = "Date", by.y = "Date", all.x = TRUE)
+USFSNoFire <- data.frame(Date = USFSFireDays[is.na(USFSFireDays$unique_ID),c(1)])
+USFSFireDays <- USFSFireDays[!is.na(USFSFireDays$unique_ID),]
 
 
 
