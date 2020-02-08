@@ -143,14 +143,14 @@ for(agent in 1:2){
           a <- a + geom_vline(aes(xintercept=threshold[j]), colour="steelblue", linetype="dashed")
           a <- a + theme_classic() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
           
-          grob1 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""),
+          grob1 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""),
                                    x=(texX-0.45),  y=texy, hjust=0,
-                                   gp=gpar(col="grey26", fontsize=09, fontface="italic")))
-          grob2 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""), 
+                                   gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+          grob2 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""), 
                                      x=(texX-0.93),  y=(texy), hjust=0,
-                                     gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+                                     gp=gpar(col="grey26", fontsize=09, fontface="italic")))
           a <- a + annotation_custom(grob1) + annotation_custom(grob2) 
-         
+          nNon
           a
           
           plots[[i]] <- a
@@ -176,12 +176,12 @@ for(agent in 1:2){
           a <- a + geom_vline(aes(xintercept=threshold[j]), colour="steelblue", linetype="dashed")
           a <- a + theme_classic() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
           
-          grob1 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""),
+          grob1 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""),
                                      x=(texX-0.93),  y=texy, hjust=0,
-                                     gp=gpar(col="grey26", fontsize=09, fontface="italic")))
-          grob2 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""), 
-                                     x=(texX-0.93),  y=(texy-0.1), hjust=0,
                                      gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+          grob2 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""), 
+                                     x=(texX-0.93),  y=(texy-0.1), hjust=0,
+                                     gp=gpar(col="grey26", fontsize=09, fontface="italic")))
           a <- a + annotation_custom(grob1) + annotation_custom(grob2) 
           
           a
@@ -276,12 +276,12 @@ for(agent in 1:2){
         a <- a + geom_vline(aes(xintercept=threshold[j]), colour="steelblue", linetype="dashed")
         a <- a + theme_classic() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
         
-        grob1 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""),
+        grob1 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""),
                                    x=texX,  y=texy, hjust=1,
-                                   gp=gpar(col="grey26", fontsize=09, fontface="italic")))
-        grob2 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""), 
-                                   x=texX,  y=(texy-0.1), hjust=1,
                                    gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+        grob2 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""), 
+                                   x=texX,  y=(texy-0.1), hjust=1,
+                                   gp=gpar(col="grey26", fontsize=09, fontface="italic")))
         a <- a + annotation_custom(grob1) + annotation_custom(grob2) 
         
         a
