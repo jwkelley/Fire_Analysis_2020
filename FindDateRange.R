@@ -46,21 +46,8 @@ USFSFireDays <- merge(fullRange, USFSFires, by.x = "Date", by.y = "Date", all.x 
 USFSNoFire <- data.frame(Date = USFSFireDays[is.na(USFSFireDays$unique_ID),c(1)])
 USFSFireDays <- USFSFireDays[!is.na(USFSFireDays$unique_ID),]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+aqs <- c("PM2.5_AllYears.csv", "PM10_AllYears.csv", "Lead_AllYears.csv", 
+            "CO_AllYears.csv", "NO2_AllYears.csv", "O3_AllYears.csv", "SO2_AllYears.csv")
 
 ####Make plots
 library(ggplot2)
@@ -70,7 +57,7 @@ library(Rmisc)
 library(ggpubr)
 library(cowplot)
 library("devtools")
-install_github("https://github.com/kassambara/easyGgplot2")
+# install_github("https://github.com/kassambara/easyGgplot2")
 library(easyGgplot2)
 
 var.name <- c("PM2.5", "PM10", "Lead", "CO", "NO2", "O3", "SO2") #,"wind", "tavg", "tmax", "tmin", "precip","PDSI")
@@ -96,108 +83,258 @@ var.full.name <- c("PM2.5 Measurements","PM10 Measurements","Lead Measurements",
                    "Daily Average Temperature", "Daily Maximum Temperature", "Daily Minimum Temperature",
                    "Daily Precipitation","Palmer Drought Severity Index")
 x.mins <-c(0,0,0,0,0,0,0) 
-#x.maxs <- c(40,120,.15,2,60,.08,10) #less tail
 x.maxs <- c(65, 250, .25, 2, 60, .08, 20) #w tail
-
+y.max <- c(0.2, 0.07, 450, 5, 0.45, 70, 2.5)
+texX <- c(0.95)
+texy <- c(0.90)
 threshold <- c(35, 150, .15, 35, 100, .07, 75)
 #############################################################
-AQ_list <- c("PM2.5_AllYears", "PM10_AllYears", "Lead_AllYears", "CO_AllYears")
-  
-for(j in 1:7){ #var
-  #make file
-  if(j==1|j==2|j==3){
-    
-  } else if(j==4|j==5|j==6|j==7){
-    
+for(agent in 1:2){
+  if(agent == 1){
+    fireDays <- USFSFireDays
+    nonFireDays <- USFSNoFire
+    agnt <- "USFS"
+  }else if(agent == 2){
+    fireDays <- doiFireDays
+    nonFireDays <- doiNoFire
+    agnt <- "DOI"
   }
   
-  
-  write.csv(Var, paste("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/", var.name[j], "_AllYears.csv", sep = ""), row.names = FALSE)
-  Var$Type <- "All Observations"
-  head(Var)
-  
-  Fires <- read.csv("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/Fires_AllCalcs.csv")
-  Fires <- subset(Fires, select = c("State", "Date", var.name[j]))
-  colnames(Fires) <- c("State", "Date", var.name[j])
-  Fires$Type <- "Fire Observations"
-  
-  file <- rbind(Var, Fires)
-  unique(file$State)
-  plots <- list()
-  
-  for(i in 1:11){ #state
-    state <- subset(file, State==state.abbr[i] | State==state.num[i])
-    state <- state[!(is.na(state[,3])),]
-    #make plot, save to list
-    title <-x.labs[j]
-    a <- ggplot2.histogram(data=state, xName=var.name[j], xtitle=title, ytitle="Density",
-                           xtitleFont=c(9,"plain", "black"), ytitleFont=c(9,"plain", "black"),
-                           xTickLabelFont=c(7,"plain", "black"), yTickLabelFont=c(7,"plain", "black"),
-                           xlim=c(x.mins[j],x.maxs[j]), 
-                           showLegend=FALSE,
-                           groupName = "Type", groupColors = c( "grey26","#FF6666"),legendPosition=NULL,
-                           alpha=0.5, position="dodge",
-                           addDensity=TRUE,
-                           binwidth=((x.maxs[j]-x.mins[j])/20), mainTitle=paste0(state.name[i]),
-                           addMeanLine=TRUE, meanLineColor=c("black","red"),
-                           meanLineType="dashed", meanLineSize=.4) 
-    #geom_vline(aes(xintercept=mean.PM10.WA), colour="black", linetype="dashed")
-    
-    plots[[i]] <- a
+  for(j in 1:7){ #var
+    if(j == 6){
+      #make file
+      csv <- aqs[j]
+      aqData <- read.csv(csv)
+      aqData$Date <- as_date(aqData$Date)
+      aqNonFire <- merge(nonFireDays, aqData, by.x = "Date", by.y = "Date")
+      aqNonFire$Type <- "Non-Fire Observations"
+      
+      
+      
+      Fires <- subset(fireDays, select = c("State", "Date", var.name[j]))
+      colnames(Fires) <- c("State", "Date", var.name[j])
+      Fires$Type <- paste("Fire Observations (", agnt, ")", sep = "") 
+      
+      file <- rbind(aqNonFire, Fires)
+      unique(file$State)
+      plots <- list()
+      
+      write.csv(file, paste0(var.name[j],"_JoinedData_", agnt, ".csv"), row.names = FALSE)
+      for(i in 1:11){ #state
+        if(i ==10){
+          state <- subset(file, State==state.abbr[i] | State==state.num[i])
+          state <- state[!(is.na(state[,3])),]
+          nNon <- nrow(state[which(state$Type == "Non-Fire Observations"),])
+          nFire <- nrow(state[which(state$Type == paste("Fire Observations (", agnt, ")", sep = "")),])
+          #make plot, save to list
+          title <-x.labs[j]
+          a <- ggplot2.histogram(data=state, xName=var.name[j], xtitle=title, ytitle="Density",
+                                 xtitleFont=c(9,"plain", "black"), ytitleFont=c(9,"plain", "black"),
+                                 xTickLabelFont=c(7,"plain", "black"), yTickLabelFont=c(7,"plain", "black"),
+                                 xlim=c(x.mins[j],x.maxs[j]),
+                                 ylim=c(0, y.max[j]),
+                                 showLegend=FALSE,
+                                 groupName = "Type", groupColors = c("#FF6666", "grey26"),legendPosition=NULL,
+                                 alpha=0.5, position="dodge",
+                                 addDensity=TRUE,
+                                 binwidth=((x.maxs[j]-x.mins[j])/20), mainTitle=paste0(state.name[i]),
+                                 addMeanLine=TRUE, meanLineColor=c("black","red"),
+                                 meanLineType="dashed", meanLineSize=.4) 
+          a <- a + geom_vline(aes(xintercept=threshold[j]), colour="steelblue", linetype="dashed")
+          a <- a + theme_classic() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+          
+          grob1 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""),
+                                   x=(texX-0.45),  y=texy, hjust=0,
+                                   gp=gpar(col="grey26", fontsize=09, fontface="italic")))
+          grob2 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""), 
+                                     x=(texX-0.93),  y=(texy), hjust=0,
+                                     gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+          a <- a + annotation_custom(grob1) + annotation_custom(grob2) 
+         
+          a
+          
+          plots[[i]] <- a
+        }else{
+          state <- subset(file, State==state.abbr[i] | State==state.num[i])
+          state <- state[!(is.na(state[,3])),]
+          nNon <- nrow(state[which(state$Type == "Non-Fire Observations"),])
+          nFire <- nrow(state[which(state$Type == paste("Fire Observations (", agnt, ")", sep = "")),])
+          #make plot, save to list
+          title <-x.labs[j]
+          a <- ggplot2.histogram(data=state, xName=var.name[j], xtitle=title, ytitle="Density",
+                                 xtitleFont=c(9,"plain", "black"), ytitleFont=c(9,"plain", "black"),
+                                 xTickLabelFont=c(7,"plain", "black"), yTickLabelFont=c(7,"plain", "black"),
+                                 xlim=c(x.mins[j],x.maxs[j]),
+                                 ylim=c(0, y.max[j]),
+                                 showLegend=FALSE,
+                                 groupName = "Type", groupColors = c("#FF6666", "grey26"),legendPosition=NULL,
+                                 alpha=0.5, position="dodge",
+                                 addDensity=TRUE,
+                                 binwidth=((x.maxs[j]-x.mins[j])/20), mainTitle=paste0(state.name[i]),
+                                 addMeanLine=TRUE, meanLineColor=c("black","red"),
+                                 meanLineType="dashed", meanLineSize=.4) 
+          a <- a + geom_vline(aes(xintercept=threshold[j]), colour="steelblue", linetype="dashed")
+          a <- a + theme_classic() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+          
+          grob1 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""),
+                                     x=(texX-0.93),  y=texy, hjust=0,
+                                     gp=gpar(col="grey26", fontsize=09, fontface="italic")))
+          grob2 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""), 
+                                     x=(texX-0.93),  y=(texy-0.1), hjust=0,
+                                     gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+          a <- a + annotation_custom(grob1) + annotation_custom(grob2) 
+          
+          a
+          
+          plots[[i]] <- a
+        }
+      }
+      state <- subset(file, State==state.abbr[1] | State==state.num[1])
+      b <- ggplot2.histogram(data=state, xName=var.name[j], 
+                              groupName = "Type", groupColors = c("#FF6666", "grey26"),
+                              legendTitle="",
+                              binwidth=((x.maxs[j]-x.mins[j])/20)) 
+        
+      b
+      extractLegend <- function(gg) {
+          grobs <- ggplot_gtable(ggplot_build(gg))
+          foo <- which(sapply(grobs$grobs, function(x) x$name) == "guide-box")
+          grobs$grobs[[foo]]
+        }
+      legendnd <- extractLegend(b)
+      plot(legend)
+      
+      if(j==3){
+        plots[[5]] <- plots[[6]]
+        plots[[6]] <- plots[[7]]
+        plots[[7]] <- plots[[8]]
+        plots[[8]] <- plots[[9]]
+        plots[[9]] <- plots[[10]]
+        plots[[10]] <- NULL
+        plots[[10]] <- NULL
+        
+        plots[[10]] <- ggdraw(legend)
+        lay <- rbind(c(1,2,3,NA),
+                     c(4,5,6,10),
+                     c(7,8,9,NA))
+        
+        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        figure <- grid.arrange(grobs=plots,layout_matrix=lay)
+        print(figure)
+        dev.off()
+      } else {
+        plots[[12]] <- ggdraw(legend)
+        lay <- rbind(c(1,1,1,2,2,2,3,3,3,4,4,4),
+                     c(5,5,5,6,6,6,7,7,7,8,8,8),
+                     c(9,9,9,10,10,10,11,11,11,NA,12,NA))
+        
+        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        figure <- grid.arrange(grobs=plots,layout_matrix=lay)
+        print(figure)
+        dev.off()
+      }
+    }else{
+      #make file
+      csv <- aqs[j]
+      aqData <- read.csv(csv)
+      aqData$Date <- as_date(aqData$Date)
+      aqNonFire <- merge(nonFireDays, aqData, by.x = "Date", by.y = "Date")
+      aqNonFire$Type <- "Non-Fire Observations"
+      
+      
+      
+      Fires <- subset(fireDays, select = c("State", "Date", var.name[j]))
+      colnames(Fires) <- c("State", "Date", var.name[j])
+      Fires$Type <- paste("Fire Observations (", agnt, ")", sep = "") 
+      
+      file <- rbind(aqNonFire, Fires)
+      unique(file$State)
+      plots <- list()
+      
+      write.csv(file, paste0(var.name[j],"_JoinedData_", agnt,".csv"), row.names = FALSE)
+      for(i in 1:11){ #state
+        state <- subset(file, State==state.abbr[i] | State==state.num[i])
+        state <- state[!(is.na(state[,3])),]
+        nNon <- nrow(state[which(state$Type == "Non-Fire Observations"),])
+        nFire <- nrow(state[which(state$Type == paste("Fire Observations (", agnt, ")", sep = "")),])
+        #make plot, save to list
+        title <-x.labs[j]
+        a <- ggplot2.histogram(data=state, xName=var.name[j], xtitle=title, ytitle="Density",
+                               xtitleFont=c(9,"plain", "black"), ytitleFont=c(9,"plain", "black"),
+                               xTickLabelFont=c(7,"plain", "black"), yTickLabelFont=c(7,"plain", "black"),
+                               xlim=c(x.mins[j],x.maxs[j]),
+                               ylim=c(0, y.max[j]),
+                               showLegend=FALSE,
+                               groupName = "Type", groupColors = c("#FF6666", "grey26"),legendPosition=NULL,
+                               alpha=0.5, position="dodge",
+                               addDensity=TRUE,
+                               binwidth=((x.maxs[j]-x.mins[j])/20), mainTitle=paste0(state.name[i]),
+                               addMeanLine=TRUE, meanLineColor=c("black","red"),
+                               meanLineType="dashed", meanLineSize=.4) 
+        a <- a + geom_vline(aes(xintercept=threshold[j]), colour="steelblue", linetype="dashed")
+        a <- a + theme_classic() + theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+        
+        grob1 <- grobTree(textGrob(paste("N = ", format(nNon, big.mark = ","), sep = ""),
+                                   x=texX,  y=texy, hjust=1,
+                                   gp=gpar(col="grey26", fontsize=09, fontface="italic")))
+        grob2 <- grobTree(textGrob(paste("N = ", format(nFire, big.mark = ","), sep = ""), 
+                                   x=texX,  y=(texy-0.1), hjust=1,
+                                   gp=gpar(col="#FF6666", fontsize=09, fontface="italic")))
+        a <- a + annotation_custom(grob1) + annotation_custom(grob2) 
+        
+        a
+        
+        plots[[i]] <- a
+      }
+      state <- subset(file, State==state.abbr[1] | State==state.num[1])
+      b <- ggplot2.histogram(data=state, xName=var.name[j], 
+                             groupName = "Type", groupColors = c("#FF6666", "grey26"),
+                             legendTitle="",
+                             binwidth=((x.maxs[j]-x.mins[j])/20)) 
+      
+      b
+      extractLegend <- function(gg) {
+        grobs <- ggplot_gtable(ggplot_build(gg))
+        foo <- which(sapply(grobs$grobs, function(x) x$name) == "guide-box")
+        grobs$grobs[[foo]]
+      }
+      legend <- extractLegend(b)
+      plot(legend)
+      
+      if(j==3){
+        plots[[5]] <- plots[[6]]
+        plots[[6]] <- plots[[7]]
+        plots[[7]] <- plots[[8]]
+        plots[[8]] <- plots[[9]]
+        plots[[9]] <- plots[[10]]
+        plots[[10]] <- NULL
+        plots[[10]] <- NULL
+        
+        plots[[10]] <- ggdraw(legend)
+        lay <- rbind(c(1,2,3,NA),
+                     c(4,5,6,10),
+                     c(7,8,9,NA))
+        
+        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        figure <- grid.arrange(grobs=plots,layout_matrix=lay)
+        print(figure)
+        dev.off()
+      } else {
+        plots[[12]] <- ggdraw(legend)
+        lay <- rbind(c(1,1,1,2,2,2,3,3,3,4,4,4),
+                     c(5,5,5,6,6,6,7,7,7,8,8,8),
+                     c(9,9,9,10,10,10,11,11,11,NA,12,NA))
+        
+        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        figure <- grid.arrange(grobs=plots,layout_matrix=lay)
+        print(figure)
+        dev.off()
+      }
+    }
   }
-  state <- subset(file, State==state.abbr[1] | State==state.num[1])
-  b <- ggplot2.histogram(data=state, xName=var.name[j], 
-                         groupName = "Type", groupColors = c( "grey26","#FF6666"),
-                         legendTitle="",
-                         binwidth=((x.maxs[j]-x.mins[j])/20)) 
-  
-  b
-  extractLegend <- function(gg) {
-    grobs <- ggplot_gtable(ggplot_build(gg))
-    foo <- which(sapply(grobs$grobs, function(x) x$name) == "guide-box")
-    grobs$grobs[[foo]]
-  }
-  legend <- extractLegend(b)
-  plot(legend)
-  
-  
-  if(j==3){
-    plots[[5]] <- plots[[6]]
-    plots[[6]] <- plots[[7]]
-    plots[[7]] <- plots[[8]]
-    plots[[8]] <- plots[[9]]
-    plots[[9]] <- plots[[10]]
-    plots[[10]] <- NULL
-    plots[[10]] <- NULL
-    
-    plots[[10]] <- ggdraw(legend)
-    lay <- rbind(c(1,2,3,NA),
-                 c(4,5,6,10),
-                 c(7,8,9,NA))
-    
-    
-    
-    setwd("H:/R_Package_Cbone_FIRES/Outputs/Frequency Plots/Test/")
-    pdf(paste0(var.name[j],"_FrequencyAnalysis.pdf"), width=10, height=7, onefile=FALSE)
-    figure <- grid.arrange(grobs=plots,layout_matrix=lay)
-    print(figure)
-    dev.off()
-    
-  } else {
-    plots[[12]] <- ggdraw(legend)
-    lay <- rbind(c(1,1,1,2,2,2,3,3,3,4,4,4),
-                 c(5,5,5,6,6,6,7,7,7,8,8,8),
-                 c(9,9,9,10,10,10,11,11,11,NA,12,NA))
-    
-    setwd("H:/R_Package_Cbone_FIRES/Outputs/Frequency Plots/Test/")
-    pdf(paste0(var.name[j],"_FrequencyAnalysis.pdf"), width=10, height=7, onefile=FALSE)
-    figure <- grid.arrange(grobs=plots,layout_matrix=lay)
-    print(figure)
-    dev.off()
-  }
-  
+  graphics.off()
 }
-
-
-graphics.off()
-
