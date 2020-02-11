@@ -1,0 +1,3 @@
+"Type","Var","count","mean","sd","median","IQR"
+"Fire Observations (USFS)","PM10",606,19.046204620462,10.8967131499416,17,12
+"Non-Fire Observations","PM10",8683,17.8705516526546,15.8338983157637,14,13

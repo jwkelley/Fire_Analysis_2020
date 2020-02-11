@@ -218,8 +218,8 @@ for(agent in 1:2){
                      c(4,5,6,10),
                      c(7,8,9,NA))
         
-        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
-        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        setwd("E:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        png(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".png"), width=10, height=7, units = "in", res = 600)
         figure <- grid.arrange(grobs=plots,layout_matrix=lay)
         print(figure)
         dev.off()
@@ -229,8 +229,8 @@ for(agent in 1:2){
                      c(5,5,5,6,6,6,7,7,7,8,8,8),
                      c(9,9,9,10,10,10,11,11,11,NA,12,NA))
         
-        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
-        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        setwd("E:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        png(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".png"), width=10, height=7, units = "in", res = 600)
         figure <- grid.arrange(grobs=plots,layout_matrix=lay)
         print(figure)
         dev.off()
@@ -317,8 +317,8 @@ for(agent in 1:2){
                      c(4,5,6,10),
                      c(7,8,9,NA))
         
-        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
-        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        setwd("E:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        png(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".png"), width=10, height=7, units = "in", res = 600)
         figure <- grid.arrange(grobs=plots,layout_matrix=lay)
         print(figure)
         dev.off()
@@ -328,8 +328,8 @@ for(agent in 1:2){
                      c(5,5,5,6,6,6,7,7,7,8,8,8),
                      c(9,9,9,10,10,10,11,11,11,NA,12,NA))
         
-        setwd("H:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
-        pdf(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".pdf"), width=10, height=7, onefile=FALSE)
+        setwd("E:/R_Package_Cbone_FIRES/Code/Fire_Analysis_2020/")
+        png(paste0(var.name[j],"_FrequencyAnalysis_", agnt,".png"), width=10, height=7, units = "in", res = 600)
         figure <- grid.arrange(grobs=plots,layout_matrix=lay)
         print(figure)
         dev.off()

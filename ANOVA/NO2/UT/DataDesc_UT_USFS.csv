@@ -1,0 +1,3 @@
+"Type","Var","count","mean","sd","median","IQR"
+"Fire Observations (USFS)","NO2",135,10.5573185185185,9.01059454749138,8.667,10.988
+"Non-Fire Observations","NO2",14122,11.5031459757785,11.0868195601454,8,13.5040719696969

@@ -1,0 +1,3 @@
+"Type","Var","count","mean","sd","median","IQR"
+"Fire Observations (DOI)","PM10",103,19.7572815533981,12.8989025368535,16,16.5
+"Non-Fire Observations","PM10",20724,20.5850704497201,16.7807607233385,16,18

@@ -1,0 +1,3 @@
+"Type","Var","count","mean","sd","median","IQR"
+"Fire Observations (DOI)","Lead",129,0.00950387596899225,0.0122328477054403,0.007,0.007
+"Non-Fire Observations","Lead",773,0.00812626131953428,0.0101945884313176,0.005,0.0071

@@ -1,0 +1,3 @@
+"Type","Var","count","mean","sd","median","IQR"
+"Fire Observations (USFS)","Lead",267,0.010250936329588,0.015972743144372,0.005,0.006
+"Non-Fire Observations","Lead",151,0.0135384105960265,0.0258475295039382,0.003,0.0079
